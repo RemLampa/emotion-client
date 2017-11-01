@@ -115,8 +115,9 @@ module.exports = {
         new WebpackChunkHash()
     ],
     resolve: {
+        extensions: ['.js', '.jsx'],
         modules: [
-            path.join(__dirname, 'src'),
+            path.join(__dirname, 'src', 'js'),
             'node_modules'
         ]
     },
