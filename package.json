@@ -7,9 +7,9 @@
     "dev": "./node_modules/.bin/webpack --progress --colors",
     "dev:watch": "./node_modules/.bin/webpack -w --progress --colors",
     "start": "./node_modules/.bin/webpack-dev-server",
-    "lint": "NODE_PATH=./src/js ./node_modules/.bin/eslint --ignore-path .gitignore src/js/** src/test/**",
-    "test": "NODE_PATH=./src/js ./node_modules/.bin/mocha -r babel-register -r jsdom-global/register -r ignore-styles --recursive ./src/test --watch",
-    "test:once": "NODE_PATH=./src/js ./node_modules/.bin/mocha -r babel-register -r jsdom-global/register -r ignore-styles --recursive ./src/test",
+    "lint": "NODE_PATH=./src/js ./node_modules/.bin/eslint --ignore-path .gitignore src/js/** test/**",
+    "test": "NODE_PATH=./src/js ./node_modules/.bin/mocha -r babel-register -r jsdom-global/register -r ignore-styles --recursive ./test --watch",
+    "test:once": "NODE_PATH=./src/js ./node_modules/.bin/mocha -r babel-register -r jsdom-global/register -r ignore-styles --recursive ./test",
     "build": "npm run lint && npm run test:once && NODE_ENV=production ./node_modules/.bin/webpack -p --progress --colors",
     "gh-pages": "./node_modules/.bin/gh-pages -d dist -b gh-pages",
     "deploy": "npm run build && npm run gh-pages"
@@ -28,7 +28,9 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "clean-webpack-plugin": "^0.1.17",
@@ -53,5 +55,9 @@
     "webpack": "^3.8.1",
     "webpack-chunk-hash": "^0.5.0",
     "webpack-dev-server": "^2.9.3"
+  },
+  "dependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   }
 }
