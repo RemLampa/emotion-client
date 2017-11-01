@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "react/jsx-indent": ["error", 4]
+  },
+  "env": {
+    "browser": true
+  }
+}

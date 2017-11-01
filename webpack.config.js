@@ -23,7 +23,7 @@ const buildFolder = process.env.NODE_ENV === 'production' ? 'dist' : 'dev';
 module.exports = {
     context: path.resolve(__dirname, 'src'),
     entry: {
-        index: ['./js/index.js', './scss/main.scss']
+        index: ['./js/index.jsx', './scss/main.scss']
     },
     output: {
         path: path.resolve(__dirname, buildFolder),
