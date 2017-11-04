@@ -1,5 +1,20 @@
 {
   "env": {
     "mocha": true
+  },
+  "globals": {
+    "React": true,
+    "expect": true,
+    "sinon": true,
+    "spy": true,
+    "stub": true,
+    "mock": true,
+    "mount": true,
+    "render": true,
+    "shallow": true
+  },
+  "rules": {
+    "prefer-arrow-callback": ["off"],
+    "func-names": ["off"]
   }
 }

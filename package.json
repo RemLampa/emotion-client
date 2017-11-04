@@ -7,7 +7,7 @@
     "dev": "./node_modules/.bin/webpack --progress --colors",
     "dev:watch": "npm run dev -- --watch",
     "start": "./node_modules/.bin/webpack-dev-server",
-    "lint": "./node_modules/.bin/eslint --ignore-path .gitignore --fix src/js/** test/**",
+    "lint": "./node_modules/.bin/eslint --ext .jsx --ext .js --ignore-path .gitignore --fix src/js/** test/**",
     "test:once": "NODE_PATH=./src/js ./node_modules/.bin/mocha -r babel-register --compilers jsx:babel-register -r jsdom-global/register -r ignore-styles -r ./test/setup.js --recursive ./test",
     "test": "npm run test:once -- --watch",
     "build": "npm run lint && npm run test:once && NODE_ENV=production npm run dev -- -p",
