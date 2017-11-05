@@ -45,7 +45,7 @@ describe('App', function () {
             buttonWrapper = wrapper.find('button');
             requestStub = stub(axios, 'get');
             apiUrl = 'https://spooky-plague-26435.herokuapp.com/';
-            successRes = JSON.stringify({index: "Hello World!"});
+            successRes = JSON.stringify({ index: 'Hello World!' });
             event = { preventDefault: () => null };
         });
 

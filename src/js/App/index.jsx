@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 export default class App extends Component {
-    constructor () {
+    constructor() {
         super();
 
         this.state = {
             isApiAwake: false,
-            isPingingApi: false
+            isPingingApi: false,
         };
 
         this.apiUrl = 'https://spooky-plague-26435.herokuapp.com/';
@@ -16,7 +16,15 @@ export default class App extends Component {
         this.handleButtonClick = this.handleButtonClick.bind(this);
     }
 
-    renderUI () {
+    handleButtonClick(e) {
+        e.preventDefault();
+
+        this.setState({ isPingingApi: true });
+
+        return axios.get(this.apiUrl);
+    }
+
+    renderUI() {
         const { isApiAwake } = this.state;
 
         return isApiAwake
@@ -24,7 +32,7 @@ export default class App extends Component {
             : this.renderButton();
     }
 
-    renderButton () {
+    renderButton() {
         const isDisabled = this.state.isPingingApi;
 
         return (
@@ -34,20 +42,11 @@ export default class App extends Component {
         );
     }
 
-    handleButtonClick (e) {
-        e.preventDefault();
-
-        console.log('yes');
-        this.setState({isPingingApi: true});
-
-        return axios.get(this.apiUrl);
-    }
-
-    render () {
+    render() {
         return (
             <div>
                 { this.renderUI() }
             </div>
         );
     }
-};
+}
