@@ -3,6 +3,18 @@ import axios from 'axios';
 import App from 'App';
 import API_ROOT from 'configs/api.config';
 
+const eventObj = { preventDefault: () => null };
+const apiResponse = {
+    success: {
+        data: JSON.stringify({
+            index: 'Hello World!',
+        }),
+        status: 200,
+        statusText: 'OK',
+    },
+    fail: null,
+};
+
 describe('App', function () {
     let wrapper;
 
@@ -18,59 +30,104 @@ describe('App', function () {
         it('should have proper initial state', function () {
             expect(wrapper).to.have.state('isApiAwake').equal(false);
             expect(wrapper).to.have.state('isPingingApi').equal(false);
+            expect(wrapper).to.have.state('error').equal(null);
         });
 
         it('should render <button />', function () {
-            const buttonWrapper = wrapper.find('button').first();
+            const button = wrapper.find('button').first();
 
             expect(wrapper).to.have.exactly(1).descendants('button');
 
-            expect(buttonWrapper).to.have.prop('disabled').equal(false);
-            expect(buttonWrapper).to.have.prop('onClick', wrapper.instance().handleButtonClick);
-            expect(buttonWrapper).to.have.text('Activate Emotion Server');
+            expect(button).to.have.prop('disabled').equal(false);
+            expect(button).to.have.prop('onClick', wrapper.instance().handleButtonClick);
+            expect(button).to.have.text('Activate Emotion Server');
         });
     });
 
     context('::button', function () {
-        let buttonWrapper;
         let requestStub;
-        let apiUrl;
-        let successRes;
         let event;
         let clickSpy;
 
         beforeEach(function () {
             clickSpy = spy(App.prototype, 'handleButtonClick');
+            requestStub = stub(axios, 'get').resolves(apiResponse.success);
             wrapper = shallow(<App />);
+            event = eventObj;
+        });
 
-            buttonWrapper = wrapper.find('button');
+        afterEach(function () {
+            clickSpy.restore();
+            requestStub.restore();
+        });
+
+        it('should call handleButtonClick method when clicked', function () {
+            wrapper.find('button').simulate('click', event);
+
+            expect(clickSpy).to.have.been.calledOnce;
+        });
+
+        it('should change text and be disabled when app is pinging API', function () {
+            wrapper.setState({ isPingingApi: true });
+
+            const button = wrapper.find('button');
+
+            expect(button).to.have.text('Contacting Server...');
+
+            expect(button).to.have.prop('disabled').equal(true);
+        });
+    });
+
+    context('::handleButtonClick()', function () {
+        let instance;
+        let requestStub;
+        let event;
+
+        beforeEach(function () {
+            instance = wrapper.instance();
             requestStub = stub(axios, 'get');
-            successRes = JSON.stringify({ index: 'Hello World!' });
-            event = { preventDefault: () => null };
+            event = eventObj;
         });
 
         afterEach(function () {
             requestStub.restore();
-            clickSpy.restore();
         });
 
-        it('should call handleButtonClick method when clicked', function () {
-            buttonWrapper.simulate('click', event);
+        it('should set proper initial on-call state', function () {
+            requestStub.resolves(apiResponse.success);
 
-            expect(clickSpy).to.have.been.calledOnce;
-
+            instance.handleButtonClick(event);
             expect(wrapper).to.have.state('isPingingApi').equal(true);
-            expect(wrapper.find('button').first()).text('Contacting Server...');
+        });
+
+        it('should call backend API', function () {
+            requestStub.resolves(apiResponse.success);
+
+            instance.handleButtonClick(event);
 
             expect(requestStub).to.have.been.calledWith(API_ROOT);
         });
 
-        it('should make HTTP request to API when clicked', function () {
-            requestStub.withArgs(apiUrl).returns(successRes);
+        it('should set proper success state', function () {
+            requestStub.resolves(apiResponse.success);
 
-            buttonWrapper.simulate('click', event);
-
-            // expect(wrapper).to.
+            return instance.handleButtonClick(event).then(function () {
+                expect(wrapper).to.have.state('isApiAwake').equal(true);
+                expect(wrapper).to.have.state('isPingingApi').equal(false);
+            });
         });
+
+        it('should set proper fail state', function () {
+            requestStub.rejects();
+
+            return instance.handleButtonClick(event).then(function () {
+                expect(wrapper).to.have.state('isApiAwake').equal(false);
+                expect(wrapper).to.have.state('isPingingApi').equal(false);
+            });
+        });
+    });
+
+    context('Error Handling', function () {
+
     });
 });

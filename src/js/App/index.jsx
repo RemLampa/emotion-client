@@ -10,6 +10,7 @@ export default class App extends Component {
         this.state = {
             isApiAwake: false,
             isPingingApi: false,
+            error: null,
         };
 
         this.API_ROOT = API_ROOT;
@@ -23,7 +24,20 @@ export default class App extends Component {
 
         this.setState({ isPingingApi: true });
 
-        return axios.get(this.API_ROOT);
+        return axios.get(this.API_ROOT)
+            .then((response) => {
+                if (response.status === 200) {
+                    this.setState({ isApiAwake: true });
+                } else {
+                    throw new Error('Could not connect to server.');
+                }
+            })
+            .catch(() => {
+
+            })
+            .then(() => {
+                this.setState({ isPingingApi: false });
+            });
     }
 
     renderUI() {
