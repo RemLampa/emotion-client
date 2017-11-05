@@ -42,6 +42,10 @@ describe('App', function () {
             expect(button).to.have.prop('onClick', wrapper.instance().handleButtonClick);
             expect(button).to.have.text('Activate Emotion Server');
         });
+
+        it('should not show errors', function () {
+            expect(wrapper).to.not.have.descendants('.error');
+        });
     });
 
     context('::button', function () {
@@ -114,6 +118,7 @@ describe('App', function () {
             return instance.handleButtonClick(event).then(function () {
                 expect(wrapper).to.have.state('isApiAwake').equal(true);
                 expect(wrapper).to.have.state('isPingingApi').equal(false);
+                expect(wrapper).to.have.state('error').equal(null);
             });
         });
 
@@ -123,11 +128,19 @@ describe('App', function () {
             return instance.handleButtonClick(event).then(function () {
                 expect(wrapper).to.have.state('isApiAwake').equal(false);
                 expect(wrapper).to.have.state('isPingingApi').equal(false);
+                expect(wrapper).to.have.state('error').equal('Could not connect to server.');
             });
         });
     });
 
     context('Error Handling', function () {
+        it('should render error text', function () {
+            const errorMessage = 'Error Message';
 
+            wrapper.setState({ error: errorMessage });
+
+            expect(wrapper).to.have.exactly(1).descendants('.error');
+            expect(wrapper.find('.error')).to.have.text(errorMessage);
+        });
     });
 });

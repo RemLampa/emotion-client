@@ -15,14 +15,18 @@ export default class App extends Component {
 
         this.API_ROOT = API_ROOT;
 
-        this.renderButton = this.renderButton.bind(this);
         this.handleButtonClick = this.handleButtonClick.bind(this);
+        this.renderButton = this.renderButton.bind(this);
+        this.renderError = this.renderError.bind(this);
     }
 
     handleButtonClick(e) {
         e.preventDefault();
 
-        this.setState({ isPingingApi: true });
+        this.setState({
+            isPingingApi: true,
+            error: null,
+        });
 
         return axios.get(this.API_ROOT)
             .then((response) => {
@@ -33,7 +37,7 @@ export default class App extends Component {
                 }
             })
             .catch(() => {
-
+                this.setState({ error: 'Could not connect to server.' });
             })
             .then(() => {
                 this.setState({ isPingingApi: false });
@@ -58,9 +62,18 @@ export default class App extends Component {
         );
     }
 
+    renderError() {
+        const { error } = this.state;
+
+        return error
+            ? <div className="error">{error}</div>
+            : null;
+    }
+
     render() {
         return (
             <div>
+                { this.renderError() }
                 { this.renderUI() }
             </div>
         );
