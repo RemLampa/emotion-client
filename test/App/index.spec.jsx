@@ -12,7 +12,11 @@ const apiResponse = {
         status: 200,
         statusText: 'OK',
     },
-    fail: null,
+    fail: {
+        data: null,
+        status: 404,
+        statusText: 'Not Found',
+    },
 };
 
 describe('App', function () {
@@ -119,6 +123,16 @@ describe('App', function () {
                 expect(wrapper).to.have.state('isApiAwake').equal(true);
                 expect(wrapper).to.have.state('isPingingApi').equal(false);
                 expect(wrapper).to.have.state('error').equal(null);
+            });
+        });
+
+        it('should set proper non-200 state', function () {
+            requestStub.resolves(apiResponse.fail);
+
+            return instance.handleButtonClick(event).then(function () {
+                expect(wrapper).to.have.state('isApiAwake').equal(false);
+                expect(wrapper).to.have.state('isPingingApi').equal(false);
+                expect(wrapper).to.have.state('error').equal('Could not connect to server.');
             });
         });
 
