@@ -3,7 +3,7 @@ let backendHost;
 const hostname = window && window.location && window.location.hostname;
 
 const prodHost = 'ibleedfilm.github.io';
-const herokuHost = 'https://spooky-plague-26435.herokuapp.com/';
+const herokuHost = 'http://spooky-plague-26435.herokuapp.com/';
 const localHost = 'http://localhost/';
 
 if (hostname === prodHost) {
