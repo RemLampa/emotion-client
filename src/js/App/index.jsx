@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+import API_ROOT from 'configs/api.config';
+
 export default class App extends Component {
     constructor() {
         super();
@@ -10,7 +12,7 @@ export default class App extends Component {
             isPingingApi: false,
         };
 
-        this.apiUrl = 'https://spooky-plague-26435.herokuapp.com/';
+        this.API_ROOT = API_ROOT;
 
         this.renderButton = this.renderButton.bind(this);
         this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -21,7 +23,7 @@ export default class App extends Component {
 
         this.setState({ isPingingApi: true });
 
-        return axios.get(this.apiUrl);
+        return axios.get(this.API_ROOT);
     }
 
     renderUI() {

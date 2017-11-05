@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import App from 'App';
+import API_ROOT from 'configs/api.config';
 
 describe('App', function () {
     let wrapper;
@@ -44,7 +45,6 @@ describe('App', function () {
 
             buttonWrapper = wrapper.find('button');
             requestStub = stub(axios, 'get');
-            apiUrl = 'https://spooky-plague-26435.herokuapp.com/';
             successRes = JSON.stringify({ index: 'Hello World!' });
             event = { preventDefault: () => null };
         });
@@ -62,7 +62,7 @@ describe('App', function () {
             expect(wrapper).to.have.state('isPingingApi').equal(true);
             expect(wrapper.find('button').first()).text('Contacting Server...');
 
-            expect(requestStub).to.have.been.calledWith(apiUrl);
+            expect(requestStub).to.have.been.calledWith(API_ROOT);
         });
 
         it('should make HTTP request to API when clicked', function () {
