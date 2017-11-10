@@ -3,6 +3,8 @@ import axios from 'axios';
 import App from 'App';
 import API_ROOT from 'configs/api.config';
 
+import EmotionForm from 'EmotionForm';
+
 const eventObj = { preventDefault: () => null };
 const apiResponse = {
     success: {
@@ -20,130 +22,125 @@ const apiResponse = {
 };
 
 describe('App', function () {
-    let wrapper;
-
     beforeEach(function () {
-        wrapper = shallow(<App />);
+        this.wrapper = shallow(<App />);
     });
 
     it('should be a div', function () {
-        expect(wrapper).to.have.type('div');
+        expect(this.wrapper).to.have.type('div');
     });
 
     context('Initial State', function () {
         it('should have proper initial state', function () {
-            expect(wrapper).to.have.state('isApiAwake').equal(false);
-            expect(wrapper).to.have.state('isPingingApi').equal(false);
-            expect(wrapper).to.have.state('error').equal(null);
+            expect(this.wrapper).to.have.state('isApiAwake').equal(false);
+            expect(this.wrapper).to.have.state('isPingingApi').equal(false);
+            expect(this.wrapper).to.have.state('error').equal(null);
         });
 
-        it('should render <button />', function () {
-            const button = wrapper.find('button').first();
+        it('should render button to activate API', function () {
+            this.button = this.wrapper.find('button').first();
 
-            expect(wrapper).to.have.exactly(1).descendants('button');
+            expect(this.wrapper).to.have.exactly(1).descendants('button');
 
-            expect(button).to.have.prop('disabled').equal(false);
-            expect(button).to.have.prop('onClick', wrapper.instance().handleButtonClick);
-            expect(button).to.have.text('Activate Emotion Server');
+            expect(this.button).to.have.id('activate-button');
+            expect(this.button).to.have.prop('disabled').equal(false);
+            expect(this.button).to.have.prop('onClick', this.wrapper.instance().handleButtonClick);
+            expect(this.button).to.have.text('Activate Emotion Server');
+        });
+
+        it('should not render <EmotionForm />', function () {
+            expect(this.wrapper).to.not.have.descendants(EmotionForm);
         });
 
         it('should not show errors', function () {
-            expect(wrapper).to.not.have.descendants('.error');
+            expect(this.wrapper).to.not.have.descendants('.error');
         });
     });
 
     context('::button', function () {
-        let requestStub;
-        let event;
-        let clickSpy;
-
         beforeEach(function () {
-            clickSpy = spy(App.prototype, 'handleButtonClick');
-            requestStub = stub(axios, 'get').resolves(apiResponse.success);
-            wrapper = shallow(<App />);
-            event = eventObj;
+            this.clickSpy = spy(App.prototype, 'handleButtonClick');
+            this.requestStub = stub(axios, 'get').resolves(apiResponse.success);
+            this.wrapper = shallow(<App />);
+            this.event = eventObj;
         });
 
         afterEach(function () {
-            clickSpy.restore();
-            requestStub.restore();
+            this.clickSpy.restore();
+            this.requestStub.restore();
         });
 
         it('should call handleButtonClick method when clicked', function () {
-            wrapper.find('button').simulate('click', event);
+            this.wrapper.find('button').simulate('click', this.event);
 
-            expect(clickSpy).to.have.been.calledOnce;
+            expect(this.clickSpy).to.have.been.calledOnce;
         });
 
         it('should change text and be disabled when app is pinging API', function () {
-            wrapper.setState({ isPingingApi: true });
+            this.wrapper.setState({ isPingingApi: true });
 
-            const button = wrapper.find('button');
+            this.button = this.wrapper.find('button');
 
-            expect(button).to.have.text('Contacting Server...');
+            expect(this.button).to.have.text('Contacting Server...');
 
-            expect(button).to.have.prop('disabled').equal(true);
+            expect(this.button).to.have.prop('disabled').equal(true);
         });
     });
 
     context('::handleButtonClick()', function () {
-        let instance;
-        let requestStub;
-        let event;
-
         beforeEach(function () {
-            instance = wrapper.instance();
-            requestStub = stub(axios, 'get');
-            event = eventObj;
+            this.instance = this.wrapper.instance();
+            this.requestStub = stub(axios, 'get');
+            this.event = eventObj;
         });
 
         afterEach(function () {
-            requestStub.restore();
+            this.requestStub.restore();
         });
 
         it('should set proper initial on-call state', function () {
-            requestStub.resolves(apiResponse.success);
+            this.requestStub.resolves(apiResponse.success);
 
-            instance.handleButtonClick(event);
-            expect(wrapper).to.have.state('isPingingApi').equal(true);
+            this.instance.handleButtonClick(this.event);
+            expect(this.wrapper).to.have.state('isPingingApi').equal(true);
         });
 
         it('should call backend API', function () {
-            requestStub.resolves(apiResponse.success);
+            this.requestStub.resolves(apiResponse.success);
 
-            instance.handleButtonClick(event);
+            this.instance.handleButtonClick(this.event);
 
-            expect(requestStub).to.have.been.calledWith(API_ROOT);
+            expect(this.requestStub).to.have.been.calledWith(API_ROOT);
         });
 
         it('should set proper success state', function () {
-            requestStub.resolves(apiResponse.success);
+            this.requestStub.resolves(apiResponse.success);
 
-            return instance.handleButtonClick(event).then(function () {
-                expect(wrapper).to.have.state('isApiAwake').equal(true);
-                expect(wrapper).to.have.state('isPingingApi').equal(false);
-                expect(wrapper).to.have.state('error').equal(null);
-            });
+            return this.instance.handleButtonClick(this.event).then(function () {
+                expect(this.wrapper).to.have.state('isApiAwake').equal(true);
+                expect(this.wrapper).to.have.state('isPingingApi').equal(false);
+                expect(this.wrapper).to.have.state('error').equal(null);
+            }.bind(this));
         });
 
         it('should set proper non-200 state', function () {
-            requestStub.resolves(apiResponse.fail);
+            this.requestStub.resolves(apiResponse.fail);
 
-            return instance.handleButtonClick(event).then(function () {
-                expect(wrapper).to.have.state('isApiAwake').equal(false);
-                expect(wrapper).to.have.state('isPingingApi').equal(false);
-                expect(wrapper).to.have.state('error').equal('Could not connect to server.');
-            });
+            return this.instance.handleButtonClick(this.event).then(function () {
+                expect(this.wrapper).to.have.state('isApiAwake').equal(false);
+                expect(this.wrapper).to.have.state('isPingingApi').equal(false);
+                expect(this.wrapper).to.have.state('error').equal('Could not connect to server.');
+            }.bind(this));
         });
 
         it('should set proper fail state', function () {
-            requestStub.rejects();
+            this.requestStub.rejects();
 
-            return instance.handleButtonClick(event).then(function () {
-                expect(wrapper).to.have.state('isApiAwake').equal(false);
-                expect(wrapper).to.have.state('isPingingApi').equal(false);
-                expect(wrapper).to.have.state('error').equal('Could not connect to server.');
-            });
+            return this.instance.handleButtonClick(this.event).then(function () {
+                expect(this.wrapper).to.have.state('isApiAwake').equal(false);
+                expect(this.wrapper).to.have.state('isPingingApi').equal(false);
+                expect(this.wrapper).to.have.state('error').equal('Could not connect to server.');
+            }.bind(this));
         });
     });
 
@@ -151,10 +148,24 @@ describe('App', function () {
         it('should render error text', function () {
             const errorMessage = 'Error Message';
 
-            wrapper.setState({ error: errorMessage });
+            this.wrapper.setState({ error: errorMessage });
 
-            expect(wrapper).to.have.exactly(1).descendants('.error');
-            expect(wrapper.find('.error')).to.have.text(errorMessage);
+            expect(this.wrapper).to.have.exactly(1).descendants('.error');
+            expect(this.wrapper.find('.error')).to.have.text(errorMessage);
+        });
+    });
+
+    context('API Server Awake', function () {
+        beforeEach(function () {
+            this.wrapper.setState({ isApiAwake: true });
+        });
+
+        it('should not render a button to activate api', function () {
+            expect(this.wrapper).to.not.have.descendants('#activate-button');
+        });
+
+        it('should render <EmotionForm />', function () {
+            expect(this.wrapper).to.have.exactly(1).descendants(EmotionForm);
         });
     });
 });

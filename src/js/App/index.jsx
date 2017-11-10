@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import API_ROOT from 'configs/api.config';
 
+import EmotionForm from 'EmotionForm';
+
 export default class App extends Component {
     constructor() {
         super();
@@ -48,7 +50,7 @@ export default class App extends Component {
         const { isApiAwake } = this.state;
 
         return isApiAwake
-            ? ''
+            ? <EmotionForm />
             : this.renderButton();
     }
 
@@ -56,7 +58,7 @@ export default class App extends Component {
         const isDisabled = this.state.isPingingApi;
 
         return (
-            <button onClick={this.handleButtonClick} disabled={isDisabled}>
+            <button id="activate-button" onClick={this.handleButtonClick} disabled={isDisabled}>
                 { isDisabled ? 'Contacting Server...' : 'Activate Emotion Server' }
             </button>
         );
